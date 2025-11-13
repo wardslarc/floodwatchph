@@ -1,76 +1,53 @@
-import { FloodReport, FloodSeverity } from '@/types/flood';
+// lib/flood-utils.ts
 
-// Mock data for demonstration
-export const mockReports: FloodReport[] = [
-  {
-    id: '1',
-    location: {
-      lat: 14.5995,
-      lng: 120.9842,
-      address: 'Quezon City, Metro Manila',
-    },
-    severity: 'moderate',
-    description: 'Knee-deep flooding along Commonwealth Avenue',
-    photoUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=400&q=80',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
-  },
-  {
-    id: '2',
-    location: {
-      lat: 14.5547,
-      lng: 121.0244,
-      address: 'Pasig City, Metro Manila',
-    },
-    severity: 'severe',
-    description: 'Waist-deep flooding near Ortigas Center',
-    photoUrl: 'https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=400&q=80',
-    timestamp: new Date(Date.now() - 45 * 60 * 1000), // 45 mins ago
-  },
-  {
-    id: '3',
-    location: {
-      lat: 14.6507,
-      lng: 121.0494,
-      address: 'Marikina City, Metro Manila',
-    },
-    severity: 'light',
-    description: 'Ankle-deep water on side streets',
-    photoUrl: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&q=80',
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-  },
-];
-
-export const getSeverityColor = (severity: FloodSeverity): string => {
+// Existing functions
+export const getSeverityColor = (severity: string): string => {
   switch (severity) {
-    case 'light':
-      return '#22c55e'; // green
-    case 'moderate':
-      return '#eab308'; // yellow
-    case 'severe':
-      return '#ef4444'; // red
+    case 'light': return '#fbbf24'; // yellow
+    case 'moderate': return '#f97316'; // orange
+    case 'severe': return '#dc2626'; // red
+    default: return '#6b7280'; // gray
   }
 };
 
-export const getSeverityLabel = (severity: FloodSeverity): string => {
+export const getSeverityLabel = (severity: string): string => {
   switch (severity) {
-    case 'light':
-      return 'Light Flooding';
-    case 'moderate':
-      return 'Moderate Flooding';
-    case 'severe':
-      return 'Severe Flooding';
+    case 'light': return 'Light';
+    case 'moderate': return 'Moderate';
+    case 'severe': return 'Severe';
+    default: return 'Unknown';
   }
 };
 
-export const getTimeElapsed = (timestamp: Date): string => {
+// Time elapsed function
+export const getTimeElapsed = (date: Date | string): string => {
   const now = new Date();
-  const diff = now.getTime() - timestamp.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const past = new Date(date);
+  const diffInMs = now.getTime() - past.getTime();
+  const diffInSeconds = Math.floor(diffInMs / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
 
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return 'Just now';
+  if (diffInSeconds < 60) {
+    return 'just now';
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+  } else if (diffInDays < 7) {
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  } else if (diffInDays < 30) {
+    const weeks = Math.floor(diffInDays / 7);
+    return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+  } else if (diffInDays < 365) {
+    const months = Math.floor(diffInDays / 30);
+    return `${months} month${months > 1 ? 's' : ''} ago`;
+  } else {
+    const years = Math.floor(diffInDays / 365);
+    return `${years} year${years > 1 ? 's' : ''} ago`;
+  }
 };
+
+// Empty array for mockReports (no demo data)
+export const mockReports: any[] = [];

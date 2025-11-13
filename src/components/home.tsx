@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Droplet, MapPin, AlertTriangle, Users, Clock, LogOut, UserCircle } from 'lucide-react';
+import { Droplet, MapPin, AlertTriangle, Users, Clock, LogOut, UserCircle, Info } from 'lucide-react';
 import FloodMap from './FloodMap';
 import ReportModal from './ReportModal';
 import AuthModal from './AuthModal';
@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function Home() {
   const [showMap, setShowMap] = useState(false);
@@ -231,9 +232,9 @@ export default function Home() {
               <MapPin className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="text-3xl font-bold text-gray-900 mb-2">
-              Metro Manila
+              Nationwide
             </h3>
-            <p className="text-gray-600">Areas Covered</p>
+            <p className="text-gray-600">Coverage</p>
           </Card>
 
           <Card className="p-6 text-center hover:shadow-lg transition-shadow">
@@ -250,55 +251,67 @@ export default function Home() {
         {/* Recent Reports */}
         <div className="max-w-4xl mx-auto">
           <h3 className="text-2xl font-bold text-gray-900 mb-6">Recent Reports</h3>
-          <div className="space-y-4">
-            {reports.slice(0, 3).map((report) => (
-              <Card key={report.id} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="flex items-start gap-4">
-                  {report.photoUrl && (
-                    <img
-                      src={report.photoUrl}
-                      alt="Flood report"
-                      className="w-24 h-24 object-cover rounded-lg"
-                    />
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 className="font-semibold text-lg">{report.location.address}</h4>
-                        <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                          <Clock className="h-3 w-3" />
-                          {new Date(report.timestamp).toLocaleString()}
-                        </p>
-                      </div>
-                      <Badge
-                        variant="outline"
-                        className={`
-                          ${report.severity === 'light' ? 'bg-green-100 text-green-700 border-green-300' : ''}
-                          ${report.severity === 'moderate' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' : ''}
-                          ${report.severity === 'severe' ? 'bg-red-100 text-red-700 border-red-300' : ''}
-                        `}
-                      >
-                        {report.severity.charAt(0).toUpperCase() + report.severity.slice(1)}
-                      </Badge>
-                    </div>
-                    {report.description && (
-                      <p className="text-gray-600">{report.description}</p>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
           
-          <div className="text-center mt-8">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => setShowMap(true)}
-            >
-              View All Reports on Map
-            </Button>
-          </div>
+          {reports.length === 0 ? (
+            <Alert className="bg-blue-50 border-blue-200">
+              <Info className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                <strong>No flood reports yet.</strong> Be the first to report a flood situation in your area and help your community stay safe.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <>
+              <div className="space-y-4">
+                {reports.slice(0, 3).map((report) => (
+                  <Card key={report.id} className="p-6 hover:shadow-lg transition-shadow">
+                    <div className="flex items-start gap-4">
+                      {report.photo && (
+                        <img
+                          src={report.photo}
+                          alt="Flood report"
+                          className="w-24 h-24 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-semibold text-lg">{report.location}</h4>
+                            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                              <Clock className="h-3 w-3" />
+                              {report.timestamp ? new Date(report.timestamp).toLocaleString() : 'Recent'}
+                            </p>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className={`
+                              ${report.severity === 'light' ? 'bg-green-100 text-green-700 border-green-300' : ''}
+                              ${report.severity === 'moderate' ? 'bg-yellow-100 text-yellow-700 border-yellow-300' : ''}
+                              ${report.severity === 'severe' ? 'bg-red-100 text-red-700 border-red-300' : ''}
+                            `}
+                          >
+                            {report.severity ? report.severity.charAt(0).toUpperCase() + report.severity.slice(1) : 'Unknown'}
+                          </Badge>
+                        </div>
+                        {report.description && (
+                          <p className="text-gray-600">{report.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              
+              <div className="text-center mt-8">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setShowMap(true)}
+                >
+                  View All Reports on Map
+                </Button>
+              </div>
+            </>
+          )}
         </div>
 
         {/* How It Works */}
@@ -311,7 +324,7 @@ export default function Home() {
               </div>
               <h4 className="font-semibold text-lg mb-2">Report</h4>
               <p className="text-gray-600">
-                Submit flood reports with location, severity, and photos
+                Submit flood reports with location, severity, and description
               </p>
             </div>
             <div className="text-center">

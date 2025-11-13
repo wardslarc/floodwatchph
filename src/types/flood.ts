@@ -1,20 +1,16 @@
-export type FloodSeverity = 'light' | 'moderate' | 'severe';
-
+// types/flood.ts
 export interface FloodReport {
-  id: string;
-  location: {
-    lat: number;
-    lng: number;
-    address: string;
-  };
-  severity: FloodSeverity;
+  _id?: string;
+  id?: string;
+  severity: 'light' | 'moderate' | 'severe';
+  location: string;
   description?: string;
-  photoUrl?: string;
-  timestamp: Date;
+  latitude?: number;
+  longitude?: number;
   reportedBy?: string;
-}
-
-export interface MapFilters {
-  severity: FloodSeverity[];
-  timeRange: '1h' | '6h' | '24h' | '48h' | 'all';
+  status: 'active' | 'resolved' | 'false_report';
+  verified?: boolean;
+  createdAt?: Date | string;
+  timestamp?: Date | string; // For backward compatibility
+  updatedAt?: Date | string;
 }
